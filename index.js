@@ -1,19 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 let turf = require('@turf/turf');
 const { createClient } = require('@supabase/supabase-js');
-
-const Polygon = require('polygon');
 const drainage_area = require('./json/a-d-bho-211022.json');
-const { convertionPolygonToPostgis, insertPolygonIntoSupabase } = require('./tools');
+const { convertionPolygonToPostgis } = require('./tools');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const app = express();
+
+// Require the Azure endpoint router
+const azureEndpoint = require('./azure/azure-endpoint');
+
+// Mount the Azure endpoint
+app.use('/azure', azureEndpoint); 
+
 app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
@@ -187,8 +191,6 @@ app.get('/getShape', async function(req, res) {
     res.send(JSON.stringify(data))
   }
 });
-
-
 // POST method route
 app.post('/findAllPointsInPolygon', async (req, res) => {
 
@@ -325,7 +327,6 @@ app.get('/findGrantsInsideShape', async function(req, res) {
     res.send(JSON.stringify(data))
   }
 });
-
 
 let port = process.env.PORT || 3000;
 app.listen(port, () => {
