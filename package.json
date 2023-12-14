@@ -1,0 +1,29 @@
+{
+  "name": "gis-adasa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@replit/database": "^2.0.1",
+    "@supabase/supabase-js": "^2.22.0",
+    "@turf/turf": "^6.5.0",
+    "axios": "^0.26.0",
+    "body-parser": "^1.19.2",
+    "cors": "^2.8.5",
+    "excel4node": "^1.7.2",
+    "express": "^4.17.3",
+    "fetch-blob": "^3.1.5",
+    "fetch-file": "^1.0.1",
+    "mssql": "^10.0.1",
+    "node-fetch": "2.0",
+    "polygon": "^1.0.2",
+    "xml2js": "^0.6.2"
+  }
+}
