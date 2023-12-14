@@ -14,6 +14,7 @@ const app = express();
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
+
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint); 
 
