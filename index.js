@@ -4,6 +4,7 @@ const cors = require('cors');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 let turf = require('@turf/turf');
 const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config();
 
 const Polygon = require('polygon');
 const drainage_area = require('./json/a-d-bho-211022.json');
