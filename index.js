@@ -13,9 +13,9 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const app = express();
 
 // Require the Azure endpoint router
-//const azureEndpoint = require('./azure/azure-endpoint');
+const azureEndpoint = require('./azure/azure-endpoint');
 // Mount the Azure endpoint
-//app.use('/api', azureEndpoint); 
+app.use('/azure', azureEndpoint); 
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));

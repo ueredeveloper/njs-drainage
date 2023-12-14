@@ -1,6 +1,10 @@
 
 const express = require('express');
+const cors = require('cors');
+
 const router = express.Router();
+router.use(cors());
+
 const xml2js = require('xml2js');
 const sql = require("mssql");
 const { getUsers, getDemands } = require('./queries.js');
@@ -111,4 +115,4 @@ router.get('/getDemandas', function(req, res) {
 
 });
 
-//module.exports = router;
+module.exports = router;
