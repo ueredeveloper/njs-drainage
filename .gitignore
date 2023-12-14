@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env
+
+# Build files
+/build
+/dist
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE-specific files
+.idea/
+.vscode/
+*.sublime-*
+
+# Cache or temporary files
+.cache/
+*.swp
+
+# Arquivos Json (large files)
+# Ignore JSON files
+/json
+*.json
