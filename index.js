@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 let turf = require('@turf/turf');
+require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const drainage_area = require('./json/a-d-bho-211022.json');
 const { convertionPolygonToPostgis } = require('./tools');

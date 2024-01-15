@@ -1,7 +1,7 @@
 
 const express = require('express');
 const cors = require('cors');
-
+require('dotenv').config();
 
 const router = express.Router();
 router.use(cors());
@@ -9,6 +9,8 @@ router.use(cors());
 const xml2js = require('xml2js');
 const sql = require("mssql");
 const { getUsers, getDemands } = require('./queries.js');
+
+
 
 const { SQLDATABASE, SQLHOST, SQLUSERNAME, SQLPASSWORD } = process.env;
 
