@@ -1,3 +1,6 @@
 * 14/12/2023
-  * Adicionar os rios de DF.
-  * 
+  * Tarefa [X] - Rios DF
+    * Adicionar os rios de DF.
+    * Adicionado em 20/02/2024.
+
+  

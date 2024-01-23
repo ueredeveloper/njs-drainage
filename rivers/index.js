@@ -7,6 +7,7 @@ const turf = require('@turf/turf');
  */
 const router = express.Router();
 
+
 // Supondo que 'rios-df-141223.json' contenha recursos GeoJSON de rios
 const rivers = require('../json/rios-df-141223.json');
 
