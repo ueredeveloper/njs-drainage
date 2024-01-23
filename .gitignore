@@ -26,5 +26,5 @@ Thumbs.db
 *.swp
 
 # Arquivos Json (large files)
-# Ignore JSON files
-/json/a-d-bho-211022.json
+#
+json/

@@ -13,11 +13,16 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const app = express();
 
+// Configure CORS to allow the specific file URL
+app.use(cors({ origin: '*' }));
+
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
+const rivers = require('./rivers');
 
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint); 
+app.use('/rivers', rivers);
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));
@@ -331,6 +336,6 @@ app.get('/findGrantsInsideShape', async function(req, res) {
 
 let port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log("njs-drainage")
+  console.log(`njs-drainage running on port: ${port}`);
 });
 
