@@ -1,4 +1,6 @@
 {pkgs}: {
-  deps = [ ];
+  deps = [
+    pkgs._2bwm
+   ];
 }
 

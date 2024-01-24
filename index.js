@@ -14,9 +14,11 @@ const app = express();
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
+const riversEndpoint = require('./rivers');
 
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint); 
+app.use('/rivers', riversEndpoint);
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));
