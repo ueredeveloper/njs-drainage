@@ -8,7 +8,6 @@ const xml2js = require("xml2js");
 const sql = require("mssql");
 const { getUsers, getDemands } = require("./queries.js");
 
-
 const { SQLDATABASE, SQLHOST, SQLUSERNAME, SQLPASSWORD } = process.env;
 
 // configurações do banco

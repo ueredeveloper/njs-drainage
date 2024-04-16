@@ -5,9 +5,7 @@
 * @param {string} doc_sei Documento no sistema SEI.
 * @param {string} proc_sei Processo no sistema SEI.
 * @return {Array} Retorna uma array com usuários selecionados, endereço, documento relacionado e processo.
-*/
-
-
+*/ 
 
 exports.getUsers = function(us_nome, us_cpf_cnpj, doc_sei, proc_sei) {
   //console.log(us_nome, us_cpf_cnpj, doc_sei, proc_sei)
