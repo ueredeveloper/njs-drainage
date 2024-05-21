@@ -20,7 +20,15 @@ const riversEndpoint = require('./rivers');
 app.use('/azure', azureEndpoint); 
 app.use('/rivers', riversEndpoint);
 
-app.use(cors());
+// Allow only a specific origin
+const corsOptions = {
+  origin: '*',
+};
+
+app.use(cors(corsOptions));
+
+
+//app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 

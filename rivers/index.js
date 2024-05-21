@@ -1,11 +1,18 @@
 const express = require('express');
 const turf = require('@turf/turf');
+const cors = require('cors');
 
 /**
  * Roteador do Express para lidar com a filtragem de rios com base em coordenadas.
  * @type {express.Router}
  */
 const router = express.Router();
+
+const corsOptions = {
+  origin: '*',
+};
+
+router.use(cors(corsOptions));
 
 
 // Supondo que 'rios-df-141223.json' contenha recursos GeoJSON de rios

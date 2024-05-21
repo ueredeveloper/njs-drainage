@@ -61,7 +61,14 @@ router.get("/getUsuarios", function (req, res) {
       res.header("Access-Control-Allow-Origin", "*");
       res.header("Access-Control-Allow-Headers", "X-Requested-With");
 
-      res.send(JSON.stringify(recordset.recordsets[0]));
+    
+      // Verificar se o recordset está válido
+        if (recordset.recordsets && recordset.recordsets[0]) {
+          res.send(JSON.stringify(recordset.recordsets[0]));
+        } else {
+          res.status(404).send("No records found");
+        }
+      
     });
   });
 });

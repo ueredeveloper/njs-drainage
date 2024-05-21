@@ -27,4 +27,5 @@ Thumbs.db
 
 # Arquivos Json (large files)
 # Ignore JSON files
+json/
 /json/a-d-bho-211022.json
