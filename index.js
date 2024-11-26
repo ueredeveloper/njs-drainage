@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 let turf = require('@turf/turf');
@@ -6,24 +7,31 @@ const { createClient } = require('@supabase/supabase-js');
 const drainage_area = require('./json/a-d-bho-211022.json');
 const { convertionPolygonToPostgis } = require('./tools');
 
-require('dotenv').config()
-
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Atualização para enviar para o azure
 
 const app = express();
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
-const riversEndPoint = require('./rivers');
-const { env } = require('process');
+const riversEndpoint = require('./rivers');
 
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint); 
-app.use('/rivers', riversEndPoint)
+app.use('/rivers', riversEndpoint);
 
-app.use(cors());
+// Allow only a specific origin
+const corsOptions = {
+  origin: '*',
+};
+
+app.use(cors(corsOptions));
+
+
+//app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
@@ -337,4 +345,3 @@ let port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("njs-drainage")
 });
-
