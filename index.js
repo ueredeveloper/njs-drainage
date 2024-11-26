@@ -10,6 +10,8 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Atualização para enviar para o azure
+
 const app = express();
 
 // Require the Azure endpoint router
