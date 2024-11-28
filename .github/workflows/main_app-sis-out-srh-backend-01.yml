@@ -53,4 +53,4 @@ jobs:
           app-name: 'app-sis-out-srh-backend-01'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C1CCC39ADF274BC2B821AB86BB04E9E0 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3BB8B69A76014A609FF818706C71B528 }}
