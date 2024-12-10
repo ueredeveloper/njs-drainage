@@ -11,9 +11,21 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const { Client } = require('pg');
+
 // Atualização para enviar para o azure
 
 const app = express();
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL || null,
+  host: process.env.DATABASE_HOST || null,
+  port: process.env.DATABASE_PORT || 5432,
+  user: process.env.DATABASE_USERNAME || null,
+  password: process.env.DATABASE_PASSWORD || null,
+  database: process.env.DATABASE_NAME || null,
+  ssl: { rejectUnauthorized: false },
+});
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
@@ -276,10 +288,36 @@ app.post('/findAllPointsInCircle', async function(req, res) {
   }
 });
 
+/**
+ * Busca todos os pontos outorgados, incluindo subterrâneo, superficial, lançamento de efluentes,
+ * lançamentos pluviais e barragens, de acordo com o parâmetro de pesquisa fornecido.
+ * A pesquisa é realizada em múltiplos campos, como nome do usuário, CPF/CNPJ, endereço da empresa, 
+ * número do processo e número do ato. Todos os campos são pesquisados com a cláusula `ILIKE`, permitindo
+ * buscas parciais (case-insensitive).
+ *
+ * @param {string} searchQuery - A string de pesquisa utilizada para buscar nos campos `us_nome`, 
+ *                                `us_cpf_cnpj`, `emp_endereco`, `int_processo`, `int_num_ato` de diversas tabelas.
+ *                                A pesquisa será realizada de forma case-insensitive e com o operador `ILIKE` 
+ *                                para encontrar correspondências parciais. 
+ *                                Exemplo: 'Carlos', '123456789', etc.
+ *
+ * @returns {Promise<object>} Retorna uma Promise com um objeto contendo os dados das várias tabelas, 
+ *                            onde cada chave é o nome de uma tabela e o valor é um array de registros correspondentes.
+ *                            Exemplo de formato:
+ *                            {
+ *                              subterranea: [...],
+ *                              superficial: [...],
+ *                              barragem: [...],
+ *                              lancamento_efluentes: [...],
+ *                              lancamento_pluviais: [...]
+ *                            }
+ */
 app.get('/findAllPoints', async function(req, res) {
+  
   let { searchQuery } = req.query;
 
-  const { data, error } = await supabase
+  // Antiga conexão com SUPABASE
+  /*const { data, error } = await supabase
     .rpc(
       'find_all_points', { searchquery: searchQuery }
     );
@@ -288,7 +326,34 @@ app.get('/findAllPoints', async function(req, res) {
     console.log(error)
   } else {
     res.send(JSON.stringify(data))
-  }
+  }*/
+
+    try {
+      // Connect to the database
+      await client.connect();
+  
+      // Define the SQL query and parameter
+      const query = `SELECT * FROM find_all_points($1);`;
+      const values = [searchQuery]; // Parameters for the query
+  
+      // Execute the query
+      const result = await client.query(query, values);
+  
+      // Log or process the results
+      //console.log('Query Results:', result.rows);
+
+      res.send(JSON.stringify(result.rows));
+  
+      //return result.rows; // Return the rows if needed
+    } catch (err) {
+      console.error('Error executing query:', err.stack);
+      throw err; // Rethrow the error for the caller to handle
+    } finally {
+      // Disconnect from the database
+      await client.end();
+    }
+
+
 });
 /**
  * Rota para encontrar subsídios dentro de uma forma geográfica específica.
