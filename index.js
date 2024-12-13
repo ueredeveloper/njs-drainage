@@ -1,22 +1,24 @@
 const express = require('express');
-require('dotenv').config();
+//require('dotenv').config();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 let turf = require('@turf/turf');
 const { createClient } = require('@supabase/supabase-js');
 const drainage_area = require('./json/a-d-bho-211022.json');
 const { convertionPolygonToPostgis } = require('./tools');
+require('dotenv').config();
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const { Client } = require('pg');
+//const { Client } = require('pg');
 
 // Atualização para enviar para o azure
 
 const app = express();
 
+/*
 const client = new Client({
   connectionString: process.env.DATABASE_URL || null,
   host: process.env.DATABASE_HOST || null,
@@ -25,14 +27,15 @@ const client = new Client({
   password: process.env.DATABASE_PASSWORD || null,
   database: process.env.DATABASE_NAME || null,
   ssl: { rejectUnauthorized: false },
-});
+});*/
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
 const riversEndpoint = require('./rivers');
+const { getClient } = require('./db');
 
 // Mount the Azure endpoint
-app.use('/azure', azureEndpoint); 
+app.use('/azure', azureEndpoint);
 app.use('/rivers', riversEndpoint);
 
 // Allow only a specific origin
@@ -46,6 +49,7 @@ app.use(cors(corsOptions));
 //app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
+
 
 
 app.get('/', async (req, res) => {
@@ -78,11 +82,13 @@ app.get('/drainage', (req, res) => {
   res.send(JSON.stringify(features));
 });
 
-app.get('/findPointsInASystem', async function(req, res) {
+app.get('/find-points-inside-subsystem', async function (req, res) {
 
   let { tp_id, lat, lng } = req.query
 
-  console.log(tp_id, lat, lng)
+  // sql: select * from find_all_points_in_a_subsystem('SRID=4674;POINT(-47.5917014 -15.6913214)', 2)
+
+  /*console.log(tp_id, lat, lng)
 
   const { data, error } = await supabase
     .rpc('findpointsinasystem', { point: `SRID=4674;POINT(${lng} ${lat})`, tp_id: tp_id })
@@ -90,10 +96,39 @@ app.get('/findPointsInASystem', async function(req, res) {
     res.send(JSON.stringify(error))
   } else {
     res.send(JSON.stringify(data))
+  }*/
+
+  let client;
+
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_all_points_in_a_subsystem($1, $2);`;
+    const values = [`SRID=4674;POINT(${lng} ${lat})`, tp_id]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
   }
 
+
 });
-app.get('/findAllPointsInASubsystem', async function(req, res) {
+/*app.get('/findAllPointsInASubsystem', async function (req, res) {
 
   let { tp_id, lat, lng } = req.query
 
@@ -107,25 +142,61 @@ app.get('/findAllPointsInASubsystem', async function(req, res) {
     res.send(JSON.stringify(data))
   }
 
-});
+});*/
 
-app.post('/findPointsInsidePolygon', async function(req, res) {
+/**
+ * @description Rota para buscar pontos dentro de um polígono.
+ * O polígono deve ser enviado no corpo da requisição no formato adequado
+ * e será convertido para o formato PostGIS.
+ * 
+ * Exemplo de polígono:
+ * [
+ *   [
+ *     -47.7544875523551,
+ *     -15.780516245814807
+ *   ],
+ *   ...
+ * ]
+ * 
+ * @route POST /find-points-inside-polygon
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do polígono.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
+app.post('/find-points-inside-polygon', async function (req, res) {
 
   let polygon = convertionPolygonToPostgis(req.body);
 
-  console.log(polygon)
+  let client;
 
-  ////console.log(polygon)
-  const { data, error } = await supabase
-    .rpc('findpointsinsidepolygon', { polygon: polygon })
-  if (error) {
-    //console.log(error)
-  } else {
-    res.send(JSON.stringify(data))
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_points_inside_polygon($1);`;
+    const values = [polygon]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
   }
+
 });
 
-app.post('/findPointsInsideRectangle', async function(req, res) {
+app.post('/findPointsInsideRectangle', async function (req, res) {
 
   let { nex, ney, swx, swy } = req.body;
 
@@ -138,8 +209,10 @@ app.post('/findPointsInsideRectangle', async function(req, res) {
   }
 });
 
-app.post('/findPointsInsideCircle', async function(req, res) {
+app.post('/findPointsInsideCircle', async function (req, res) {
   let { center, radius } = req.body;
+
+  console.log('findpointsinsidecircle', center, radius)
 
   console.log(`POINT(${center.lng} ${center.lat})`, parseInt(radius))
 
@@ -156,7 +229,7 @@ app.post('/findPointsInsideCircle', async function(req, res) {
   }
 });
 
-app.post('/findPointsInsidePolygon', async function(req, res) {
+app.post('/findPointsInsidePolygon', async function (req, res) {
 
   let polygon = convertionPolygonToPostgis(req.body);
 
@@ -169,7 +242,7 @@ app.post('/findPointsInsidePolygon', async function(req, res) {
   }
 });
 
-app.post('/findSuperficialPointsInsidePolygon', async function(req, res) {
+app.post('/findSuperficialPointsInsidePolygon', async function (req, res) {
 
   console.log('findSuperficialPointsInsidePolygon');
 
@@ -185,7 +258,7 @@ app.post('/findSuperficialPointsInsidePolygon', async function(req, res) {
   }
 });
 
-app.get('/findSuperficialPointsByUH', async function(req, res) {
+app.get('/findSuperficialPointsByUH', async function (req, res) {
 
   console.log('findSuperficialPointsInside UH', req.query.uh_codigo);
 
@@ -202,7 +275,7 @@ app.get('/findSuperficialPointsByUH', async function(req, res) {
   }
 });
 
-app.get('/getShape', async function(req, res) {
+app.get('/getShape', async function (req, res) {
 
   let { shape } = req.query;
   console.log('getShape', shape)
@@ -270,8 +343,10 @@ app.post('/findAllPointsInRectangle', async (req, res) => {
   }
 });
 
-app.post('/findAllPointsInCircle', async function(req, res) {
+app.post('/findAllPointsInCircle', async function (req, res) {
   let { center, radius } = req.body;
+
+  console.log('find_all_points_in_circle', center, radios)
 
   console.log('all circle', `POINT(${center.lng} ${center.lat})`, parseInt(radius))
 
@@ -312,46 +387,37 @@ app.post('/findAllPointsInCircle', async function(req, res) {
  *                              lancamento_pluviais: [...]
  *                            }
  */
-app.get('/findAllPoints', async function(req, res) {
-  
-  let { searchQuery } = req.query;
+app.get('/find-points-by-keyword', async function (req, res) {
 
-  // Antiga conexão com SUPABASE
-  /*const { data, error } = await supabase
-    .rpc(
-      'find_all_points', { searchquery: searchQuery }
-    );
+  let { keyword } = req.query;
 
-  if (error) {
-    console.log(error)
-  } else {
-    res.send(JSON.stringify(data))
-  }*/
+  let client;
 
-    try {
-      // Connect to the database
-      await client.connect();
-  
-      // Define the SQL query and parameter
-      const query = `SELECT * FROM find_all_points($1);`;
-      const values = [searchQuery]; // Parameters for the query
-  
-      // Execute the query
-      const result = await client.query(query, values);
-  
-      // Log or process the results
-      //console.log('Query Results:', result.rows);
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
 
-      res.send(JSON.stringify(result.rows));
-  
-      //return result.rows; // Return the rows if needed
-    } catch (err) {
-      console.error('Error executing query:', err.stack);
-      throw err; // Rethrow the error for the caller to handle
-    } finally {
-      // Disconnect from the database
-      await client.end();
-    }
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_all_points($1);`;
+    const values = [keyword]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
+  }
 
 
 });
@@ -362,7 +428,7 @@ app.get('/findAllPoints', async function(req, res) {
  * @param {object} res - Objeto de resposta do Express.
  * @returns {Promise<void>} - Promessa para lidar com a lógica assíncrona da rota.
  */
-app.get('/findGrantsInsideShape', async function(req, res) {
+app.get('/findGrantsInsideShape', async function (req, res) {
   // Extrai os parâmetros de consulta da requisição.
   let { shapeName, shapeCode } = req.query;
 
@@ -391,7 +457,7 @@ app.get('/findGrantsInsideShape', async function(req, res) {
 
   // Registra informações relevantes no console.
   //console.log('Encontrar subsídios na forma', shapeName, shapeCode)
- 
+
   // Chama a função Supabase com base na função determinada e no código da forma.
   const { data, error } = await supabase
     .rpc(
