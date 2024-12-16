@@ -20,7 +20,7 @@ const rivers = require('../json/rios-df-141223.json');
 
 /**
  * Endpoint GET para filtrar rios com base nas coordenadas do usuário.
- * @name GET/api/filterRiversByCoordinates
+ * @name GET/api/filterRiversByLatLng
  * @function
  * @memberof module:routers/rivers
  * @param {string} lat - A latitude das coordenadas solicitadas pelo usuário.
@@ -29,7 +29,7 @@ const rivers = require('../json/rios-df-141223.json');
  * @throws {Error} 400 - Requisição Inválida se os parâmetros de consulta obrigatórios (lat, lng) não forem fornecidos.
  * @throws {Error} 500 - Erro Interno do Servidor se ocorrer um erro inesperado.
  */
-router.get('/filterRiversByCoordinates', (req, res) => {
+router.get('/filter-rivers-by-lat-lng', (req, res) => {
     // Coordenada solicitada pelo usuário
     const { lat, lng } = req.query;
 

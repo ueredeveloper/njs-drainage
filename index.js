@@ -151,6 +151,22 @@ app.post('/find-points-inside-polygon', async function (req, res) {
 
 });
 
+/**
+ * @description Rota para buscar pontos dentro de um retângulo solicitado pelo usuário.
+ * O retângulo deve ser enviado no corpo da requisição no formato adequado.
+ * 
+ * Exemplo de retângulo:
+ * {
+    "nex": -47.7544875523551,
+    "ney": -15.828085825327648,
+    "swx": -47.728395023058226,
+    "swy": -15.805623805877323
+  }
+ * 
+ * @route POST /find-points-inside-rectangle
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do retângulo.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
 app.post('/find-points-inside-rectangle', async function (req, res) {
 
   let { nex, ney, swx, swy } = req.body;
@@ -188,6 +204,23 @@ app.post('/find-points-inside-rectangle', async function (req, res) {
 
 });
 
+/**
+ * @description Rota para buscar pontos dentro de um cículo solicitado pelo usuário.
+ * O usuário enviará o centro e o raio do círculo.
+ * 
+ * Exemplo de retângulo:
+ * {
+      "center": {
+        "lng": -47.755860843370726,
+        "lat": -15.743509964163012
+      },
+      "radius": 2632
+    }
+ * 
+ * @route POST /find-points-inside-circle
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do retângulo.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
 app.post('/find-points-inside-circle', async function (req, res) {
   let { center, radius } = req.body;
 
@@ -220,55 +253,166 @@ app.post('/find-points-inside-circle', async function (req, res) {
   }
 });
 
-
-
-app.post('/findSuperficialPointsInsidePolygon', async function (req, res) {
-
-  console.log('findSuperficialPointsInsidePolygon');
+/**
+ * @description Rota para buscar pontos superficiais dentro de um polígono.
+ * O polígono deve ser enviado no corpo da requisição no formato adequado
+ * e será convertido para o formato PostGIS.
+ * 
+ * Exemplo de polígono:
+ * [
+ *   [
+ *     -47.7544875523551,
+ *     -15.780516245814807
+ *   ],
+ *   ...
+ * ]
+ * 
+ * @route POST /find-points-inside-polygon
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do polígono.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
+app.post('/find-superficial-points-inside-polygon', async function (req, res) {
 
   let polygon = convertionPolygonToPostgis(req.body);
 
+  let client;
+
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_superficial_points_inside_polygon($1);`;
+    const values = [polygon]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
+  }
+
+  /*
   const { data, error } = await supabase
-    .rpc('findsuperficialpointsinsidepolygon', { polygon: polygon })
+    .rpc(' ', { polygon: polygon })
   if (error) {
     console.log(error)
     res.send(error)
   } else {
     res.send(JSON.stringify(data))
   }
+  */
+
+
 });
 
-app.get('/findSuperficialPointsByUH', async function (req, res) {
-
-  console.log('findSuperficialPointsInside UH', req.query.uh_codigo);
+/**
+ * @description Rota para buscar pontos superficiais pelo código da Unidade Hidrográfica
+ * 
+ * 
+ * Exemplo: 
+ * uh_codigo = 3
+ * 
+ * @route GET /find-superficial-points-by-uh-codigo
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do polígono.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
+app.get('/find-superficial-points-by-uh-codigo', async function (req, res) {
 
   let { uh_codigo } = req.query;
 
-  const { data, error } = await supabase
-    .rpc('find_superficial_points_by_uh', { uh_codigo: uh_codigo })
-  if (error) {
-    console.log(error)
-    res.send(error)
-  } else {
+  let client;
 
-    res.json(data);
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_superficial_points_by_uh_codigo($1);`;
+    const values = [uh_codigo]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
+  }
+
+});
+
+
+/**
+ * @description Busca shapes como Bacias Hidrográficas, Unidades Hidrográficas pelo nome da tabela no banco de dados.
+ * 
+ * 
+ * Exemplo: 
+ * shape_name = unidades_hidrograficas ou hidrogeo_fraturado
+ * 
+ * @route GET /find-shape-by-name
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do polígono.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
+app.get('/find-shape-by-name', async function (req, res) {
+
+  let { shape_name } = req.query;
+
+  let client;
+
+  try {
+    // Validate the shape_name to prevent SQL injection
+    const allowedShapes = ['bacias_hidrograficas', 'unidades_hidrograficas', 'hidrogeo_fraturado', 'hidrogeo_poroso'];
+    if (!allowedShapes.includes(shape_name)) {
+      return res.status(400).send({ error: 'Invalid shape name' });
+    }
+
+    // Connect to the database
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_shape_by_name($1)`;
+    const values = [shape_name]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Obtem os objectos no formato correto para o front end
+    let arrays = result.rows[0].find_shape_by_name.map(ssbn => ssbn.shape)
+
+    res.send(JSON.stringify(arrays));
+
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    res.status(500).send({ error: 'Internal server error' });
+  } finally {
+    // Disconnect from the database
+    if (client) {
+      await client.end();
+    }
   }
 });
 
-app.get('/getShape', async function (req, res) {
-
-  let { shape } = req.query;
-  console.log('getShape', shape)
-
-  const { data, error } = await supabase
-    .from(shape)
-    .select()
-  if (error) {
-    res.send(JSON.stringify(error))
-  } else {
-    res.send(JSON.stringify(data))
-  }
-});
 
 /**
  * Busca todos os pontos outorgados, incluindo subterrâneo, superficial, lançamento de efluentes,
@@ -335,7 +479,7 @@ app.get('/find-points-by-keyword', async function (req, res) {
  * @param {object} res - Objeto de resposta do Express.
  * @returns {Promise<void>} - Promessa para lidar com a lógica assíncrona da rota.
  */
-app.get('/findGrantsInsideShape', async function (req, res) {
+app.get('/find_points-inside-shape', async function (req, res) {
   // Extrai os parâmetros de consulta da requisição.
   let { shapeName, shapeCode } = req.query;
 
@@ -344,15 +488,15 @@ app.get('/findGrantsInsideShape', async function (req, res) {
 
   // Determina qual função Supabase usar com base no nome da forma.
   if (shapeName === 'bacias_hidrograficas') {
-    mySupabaseFunction = 'selectgrantsinsidebh';
+    mySupabaseFunction = 'find_points_inside_bacia_hidrografica';
   }
   else if (shapeName === 'unidades_hidrograficas') {
-    mySupabaseFunction = 'selectgrantsinsideuh';
+    mySupabaseFunction = 'find_points_inside_unidade_hidrografica';
   }
   else if (shapeName === 'hidrogeo_fraturado') {
-    mySupabaseFunction = 'selectgrantsinsidehf';
+    mySupabaseFunction = 'find_points_inside_hidrogeo_fraturado';
   } else if (shapeName === 'hidrogeo_poroso') {
-    mySupabaseFunction = 'selectgrantsinsidehp'
+    mySupabaseFunction = 'find_points_inside_hidrogeo_poroso'
   } else {
     // Envia uma resposta de erro se o nome da forma não for reconhecido.
     res.send({
@@ -362,21 +506,35 @@ app.get('/findGrantsInsideShape', async function (req, res) {
     })
   }
 
-  // Registra informações relevantes no console.
-  //console.log('Encontrar subsídios na forma', shapeName, shapeCode)
+  let client;
 
-  // Chama a função Supabase com base na função determinada e no código da forma.
-  const { data, error } = await supabase
-    .rpc(
-      mySupabaseFunction, { shapecode: shapeCode }
-    );
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
 
-  // Lida com erros ou envia os dados obtidos como resposta.
-  if (error) {
-    console.log(error)
-  } else {
-    res.send(JSON.stringify(data))
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM ${mySupabaseFunction}($1);`;
+    const values = [shapeCode]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
   }
+
+ 
 });
 
 let port = process.env.PORT || 3000;
