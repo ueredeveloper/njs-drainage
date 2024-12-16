@@ -1,4 +1,5 @@
 
+
 Utilizando `url.searchParams`. Ver [url.searchParams](https://nodejs.org/api/url.html#new-urlinput-base). O objeto `json.token` é obtido na primeira requisição `POST`.
 
  ```

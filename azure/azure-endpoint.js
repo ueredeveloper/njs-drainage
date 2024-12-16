@@ -10,6 +10,7 @@ const { getUsers, getDemands } = require("./queries.js");
 
 const { SQLDATABASE, SQLHOST, SQLUSERNAME, SQLPASSWORD } = process.env;
 
+
 // configurações do banco
 const config = {
   user: SQLUSERNAME,
