@@ -99,6 +99,41 @@ app.get('/find-points-inside-subsystem', async function (req, res) {
 
 });
 
+app.get('/find-otto-basins-by-lat-lng', async function (req, res) {
+
+  let { lat, lng } = req.query
+
+  let client;
+
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_ottobasins_by_lat_lng ($1, $2)`;
+    const values = [lat, lng]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
+  }
+
+
+});
+
 /**
  * @description Rota para buscar pontos dentro de um polígono.
  * O polígono deve ser enviado no corpo da requisição no formato adequado
@@ -208,7 +243,7 @@ app.post('/find-points-inside-rectangle', async function (req, res) {
  * @description Rota para buscar pontos dentro de um cículo solicitado pelo usuário.
  * O usuário enviará o centro e o raio do círculo.
  * 
- * Exemplo de retângulo:
+ * Exemplo de círculo:
  * {
       "center": {
         "lng": -47.755860843370726,
@@ -320,6 +355,8 @@ app.post('/find-superficial-points-inside-polygon', async function (req, res) {
 /**
  * @description Rota para buscar pontos superficiais pelo código da Unidade Hidrográfica
  * 
+ * Esta forma é a anterior que é utilizado no replit para o projeto njs-js-drainage. O projeto novo, 
+ * com todos os projetos juntos (Geral, Subterrânea, Superficial) utilizará outra função.
  * 
  * Exemplo: 
  * uh_codigo = 3
@@ -341,6 +378,52 @@ app.get('/find-superficial-points-by-uh-codigo', async function (req, res) {
 
     // Define the SQL query and parameter
     const query = `SELECT * FROM find_superficial_points_by_uh_codigo($1);`;
+    const values = [uh_codigo]; // Parameters for the query
+
+    // Execute the query
+    const result = await client.query(query, values);
+
+    // Log or process the results
+    //console.log('Query Results:', result.rows);
+
+    res.send(JSON.stringify(result.rows));
+
+    //return result.rows; // Return the rows if needed
+  } catch (err) {
+    console.error('Error executing query:', err.stack);
+    throw err; // Rethrow the error for the caller to handle
+  } finally {
+    // Disconnect from the database
+    await client.end();
+  }
+
+});
+
+/**
+ * @description Rota para buscar pontos superficiais pelo código da Unidade Hidrográfica
+ * 
+ * Este novo mode padroniza a entrega das outorgas superficiais no padrão do projeto que une todos os projetos (Geral, Subterrânea e Superficial)
+ * 
+ * Exemplo: 
+ * uh_codigo = 3
+ * 
+ * @route GET /find-superficial-points-by-uh-codigo
+ * @param {Object} req - Objeto de requisição contendo o corpo com os dados do polígono.
+ * @param {Object} res - Objeto de resposta para enviar os resultados ou erros.
+ */
+app.get('/find-surface-pointos-inside-uh', async function (req, res) {
+
+  let { uh_codigo } = req.query;
+
+  let client;
+
+  try {
+    // Connect to the database
+    // await client.connect();
+    client = await getClient();
+
+    // Define the SQL query and parameter
+    const query = `SELECT * FROM find_surface_points_inside_uh($1);`;
     const values = [uh_codigo]; // Parameters for the query
 
     // Execute the query
@@ -534,7 +617,7 @@ app.get('/find_points-inside-shape', async function (req, res) {
     await client.end();
   }
 
- 
+
 });
 
 let port = process.env.PORT || 3000;

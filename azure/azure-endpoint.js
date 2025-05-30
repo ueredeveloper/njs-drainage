@@ -6,7 +6,7 @@ router.use(cors());
 
 const xml2js = require("xml2js");
 const sql = require("mssql");
-const { getUsers, getDemands } = require("./queries.js");
+const { getUsers, getDemands, getOttoBasins } = require("./queries.js");
 
 const { SQLDATABASE, SQLHOST, SQLUSERNAME, SQLPASSWORD } = process.env;
 
@@ -79,7 +79,7 @@ router.get("/getUsuarios", function (req, res) {
  * @return {Array} Retorna uma array com finalidades autorizadas para o endereço selecionado.
  */
 router.get("/getDemandas", function (req, res) {
-  let { end_id } = req.query;
+ //let { end_id } = req.query;
 
   //conexão com o banco
   sql.connect(config, function (err) {
@@ -90,11 +90,13 @@ router.get("/getDemandas", function (req, res) {
     // criar requirisão
     var request = new sql.Request();
 
-    let query = getDemands(end_id);
+    let query = getOttoBasins();
 
     // requisição
     request.query(query, function (err, recordset) {
       if (err) console.log(err);
+
+      console.log(recordset)
 
       let demandas = recordset.recordset.map((rec) => {
         if (rec.dt_demanda !== null) {
