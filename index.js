@@ -99,6 +99,17 @@ app.get('/find-points-inside-subsystem', async function (req, res) {
 
 });
 
+/**
+ * Rota GET para buscar bacias Otto a partir de coordenadas geográficas (latitude e longitude).
+ *
+ * @route GET /find-otto-basins-by-lat-lng
+ * @query {number} lat - Latitude da coordenada de busca.
+ * @query {number} lng - Longitude da coordenada de busca.
+ * @returns {JSON} Retorna uma lista de bacias Otto que intersectam com as coordenadas fornecidas.
+ *
+ * @example
+ 
+ */
 app.get('/find-otto-basins-by-lat-lng', async function (req, res) {
 
   let { lat, lng } = req.query
