@@ -111,7 +111,7 @@ app.get('/find-otto-basins-by-lat-lng', async function (req, res) {
     client = await getClient();
 
     // Define the SQL query and parameter
-    const query = `SELECT * FROM find_ottobasins_by_lat_lng ($1, $2)`;
+    const query = `SELECT * FROM find_otto_basins_by_lat_lng ($1, $2)`;
     const values = [lat, lng]; // Parameters for the query
 
     // Execute the query
