@@ -1,0 +1,11 @@
+const express = require('express');
+const { searchUserByParam, upsertUser, deleteUserById, searchUsersByDocumentId } = require('../controllers/usuario-controller');
+
+const router = express.Router();
+
+router.get('/search-users-by-param', searchUserByParam);
+router.get('/search-users-by-document-id', searchUsersByDocumentId);
+router.post('/upsert-user', upsertUser);
+router.delete('/delete-user-by-id', deleteUserById);
+
+module.exports = router;

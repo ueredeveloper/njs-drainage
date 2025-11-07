@@ -47,7 +47,22 @@ JSON.stringify({
 })
 
 ```
+## 06/02/2025 
+- [X] Criação da tabela `otto-bacias` e método de busca dos polígonos por uma coordenada.
+- [X] Criar arquivo .md de conexão via FTP.
+
+### Observação
+  No último commit, no momento em que enviei para o github o azure atualizou junto, porém estava faltando as senhas do banco da Adasa. Estas senhas não devem ser enviadas junto com os arquivos para o azure, ou seja, o arquivo .env não deve ser enviado. As senhas devem ser adicionadas nas variáveis ambiente do portal azure.
 
 
+## 13/06/2025
+- [] Foi verificado que a área da uh 26 está nula. 
+    Foi calculado a área temporariamente em 117.41 km² e editado
+      update unidades_hidrograficas set area_km_sq = 117.41 where objectid = 42
+
+  
 
 
+## 23/07/2025
+
+- [] Não consegui achar a barragem pelo processo (00197-00001926/2023-58). Modifiquei a regra de cors para aceitar apenas requisções do link do fronte end.

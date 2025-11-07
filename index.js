@@ -13,19 +13,100 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const app = express();
+app.use(express.json());
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
 const riversEndpoint = require('./rivers');
 const { getClient } = require('./db');
+const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
+  fetchAllStates, fetchAllDomainTables, deleteAddress,
+  upsertAddress, searchUsersByParam, searchDocumentsByUserId,
+  upsertUser, deleteUserById,
+  searchProcessByParam,
+  upsertProcess,
+  deleteProcess,
+  searchAttachmentByParam,
+  upsertAttachment,
+  deleteAttachment,
+  listAllHydrograficBasins,
+  listAllHydrograficUnits, 
+  findHydrographicUnitByPoint,
+  findHydrographicBasinByPoint,
+  findFraturadoSystemByPoint,
+  findPorosoSystemByPoint,
+  listAllHydrogeoFraturado,
+  listAllHydrogeoPoroso,
+  searchInterferencesByParam,
+  upsertInterference,
+  deleteInterference,
+  deletePurpose,
+  upsertDocument,
+  deleteDocument,
+  deleteDocUserRelation,
+  searchUsersByDocumentId,
+
+} = require('./routes');
+
 
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint);
 app.use('/rivers', riversEndpoint);
 
+app.use('/documents', searchDocumentsByParam)
+app.use('./documents', searchDocumentsByUserId)
+
+app.use('/document-types', getDocumentTypes)
+
+app.use('/addresses', searchAddressByParam)
+app.use('/addresses', upsertAddress)
+
+app.use('/addresses', deleteAddress)
+
+app.use('/states', fetchAllStates)
+app.use('/domains', fetchAllDomainTables)
+
+app.use('/users', searchUsersByParam)
+app.use('/users', searchUsersByDocumentId)
+app.use('/users', upsertUser)
+app.use('/users', deleteUserById)
+
+app.use('/processes', searchProcessByParam)
+app.use('/processes', upsertProcess)
+app.use('/processes', deleteProcess)
+
+app.use('/attachments', searchAttachmentByParam)
+app.use('/attachments', upsertAttachment)
+app.use('/attachments', deleteAttachment)
+
+app.use('/hydrographic-basins', listAllHydrograficBasins)
+app.use('/hydrographic-basins', findHydrographicBasinByPoint)
+
+app.use('/hydrographic-units', listAllHydrograficUnits)
+app.use('/hydrographic-units', findHydrographicUnitByPoint  )
+
+app.use('/hydrogeo-fraturado', findFraturadoSystemByPoint)
+app.use('/hydrogeo-fraturado', listAllHydrogeoFraturado)
+
+app.use('/hydrogeo-poroso', findPorosoSystemByPoint )
+app.use('/hydrogeo-poroso', listAllHydrogeoPoroso)
+
+app.use('/interferences', searchInterferencesByParam)
+app.use('/interferences', upsertInterference)
+app.use('/interferences', deleteInterference)
+
+app.use('/purposes', deletePurpose)
+
+app.use('/documents', upsertDocument)
+app.use('/documents', deleteDocument)
+app.use('/documents', deleteDocUserRelation)
+
+
 // Allow only a specific origin
 const corsOptions = {
-  origin: '*',
+  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
+  methods: ['GET'],
+  credentials: false, // se você usa cookies/autenticação
 };
 
 app.use(cors(corsOptions));
@@ -35,7 +116,7 @@ app.use(bodyParser.json({ limit: '200mb' }));
 app.use(bodyParser.urlencoded({ limit: '200mb', extended: true }));
 
 app.get('/', async (req, res) => {
-  res.send("<b>njs - Arcgis!!!</b>");
+  res.send("<b>NJS-JS-DRAINAGE - BACKEND!!!</b>");
 });
 
 app.get('/drainage', (req, res) => {
@@ -440,12 +521,8 @@ app.get('/find-surface-pointos-inside-uh', async function (req, res) {
     // Execute the query
     const result = await client.query(query, values);
 
-    // Log or process the results
-    //console.log('Query Results:', result.rows);
-
     res.send(JSON.stringify(result.rows));
 
-    //return result.rows; // Return the rows if needed
   } catch (err) {
     console.error('Error executing query:', err.stack);
     throw err; // Rethrow the error for the caller to handle
