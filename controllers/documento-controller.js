@@ -60,10 +60,10 @@ exports.deleteDocument = async (req, res) => {
 
 exports.deleteDocUserRelation = async (req, res) => {
 
-  let { doc_id, user_id } = req.query;
+  let { docId, userId } = req.query;
 
   try {
-    const docs = await deleteDocUserRelation(doc_id, user_id);
+    const docs = await deleteDocUserRelation(docId, userId);
     res.status(201).json(docs);
   } catch (err) {
     res.status(500).json({ error: err.message });

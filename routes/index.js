@@ -21,6 +21,7 @@ const fetchAllDomainTables = require('./dominio-route')
 
 // Usuarios
 const searchUsersByParam = require('./usuario-route');
+const searchUsersByCpfCnpj = require('./usuario-route');
 const searchUsersByDocumentId = require('./usuario-route');
 const upsertUser = require('./usuario-route');
 const deleteUserById = require('./usuario-route');
@@ -74,6 +75,7 @@ module.exports = {
 
     // usuários
     searchUsersByParam,
+    searchUsersByCpfCnpj,
     searchUsersByDocumentId,
     upsertUser,
     deleteUserById,

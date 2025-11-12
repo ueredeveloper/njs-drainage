@@ -129,7 +129,7 @@ exports.deleteDocument = async (id) => {
 }
 
 
-exports.deleteDocUserRelation = async (doc_id, user_id) => {
+exports.deleteDocUserRelation = async (docId, userId) => {
 
     let client;
 
@@ -141,7 +141,7 @@ exports.deleteDocUserRelation = async (doc_id, user_id) => {
         const query = `select delete_doc_user_relation($1, $2) as result;`;
 
         // Executa a query passando o parâmetro informado
-        const { rows } = await client.query(query, [doc_id, user_id]);
+        const { rows } = await client.query(query, [docId, userId]);
 
         // Extrai apenas o array final de resultados do campo "result"
         const data = rows[0]?.result || [];

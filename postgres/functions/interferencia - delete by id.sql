@@ -9,7 +9,7 @@ BEGIN
 
     IF NOT v_exists THEN
         RETURN jsonb_build_object(
-            'status', 'error',
+            'status', 'erro',
             'mensagem', format('Interferência com id %s não encontrada.', int_id),
             'object', NULL
         );
@@ -41,7 +41,7 @@ BEGIN
     EXCEPTION
         WHEN OTHERS THEN
             RETURN jsonb_build_object(
-                'status', 'error',
+                'status', 'erro',
                 'mensagem', format('Erro ao deletar interferência %s: %s', int_id, SQLERRM),
                 'object', NULL
             );

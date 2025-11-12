@@ -13,7 +13,7 @@ BEGIN
     -- Caso não exista, retorna mensagem de erro
     IF NOT FOUND THEN
         RETURN json_build_object(
-            'status', 'error',
+            'status', 'erro',
             'message', format('Não há finalidade com id = %s', p_id),
             'object', NULL
         );
@@ -24,8 +24,8 @@ BEGIN
 
     -- Retorna mensagem de sucesso com o objeto deletado
     v_result := json_build_object(
-        'status', 'success',
-        'message', 'Record deleted successfully.',
+        'status', 'sucesso',
+        'message', 'Finalidade deletad com sucesso.',
         'object', json_build_object(
           'id', v_purpose.id, 
           'finalidade', v_purpose.finalidade

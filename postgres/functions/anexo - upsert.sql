@@ -21,7 +21,7 @@ BEGIN
         EXCEPTION
             WHEN unique_violation THEN
                 RETURN jsonb_build_object(
-                    'status', 'error',
+                    'status', 'erro',
                     'mensagem', format('Já existe um anexo com o número %s.', v_numero),
                     'objeto', NULL
                 );
@@ -56,7 +56,7 @@ BEGIN
         WHERE a.id = v_id;
 
         RETURN jsonb_build_object(
-            'status', 'success',
+            'status', 'sucesso',
             'mensagem', 'Anexo salvo com sucesso.',
             'objeto', v_result
         );
@@ -72,7 +72,7 @@ BEGIN
             EXCEPTION
                 WHEN unique_violation THEN
                     RETURN jsonb_build_object(
-                        'status', 'error',
+                        'status', 'erro',
                         'mensagem', format('Já existe outro anexo com o número %s.', v_numero),
                         'objeto', NULL
                     );
@@ -107,14 +107,14 @@ BEGIN
             WHERE a.id = v_id;
 
             RETURN jsonb_build_object(
-                'status', 'success',
+                'status', 'sucesso',
                 'mensagem', 'Anexo editado com sucesso.',
                 'objeto', v_result
             );
 
         ELSE
             RETURN jsonb_build_object(
-                'status', 'error',
+                'status', 'erro',
                 'mensagem', format('Anexo com id=%s não encontrado.', v_id),
                 'objeto', NULL
             );

@@ -56,13 +56,17 @@ JSON.stringify({
 
 
 ## 13/06/2025
-- [] Foi verificado que a área da uh 26 está nula. 
+- [X] Foi verificado que a área da uh 26 está nula. 
     Foi calculado a área temporariamente em 117.41 km² e editado
       update unidades_hidrograficas set area_km_sq = 117.41 where objectid = 42
 
   
-
-
 ## 23/07/2025
 
-- [] Não consegui achar a barragem pelo processo (00197-00001926/2023-58). Modifiquei a regra de cors para aceitar apenas requisções do link do fronte end.
+- [X] Não consegui achar a barragem pelo processo (00197-00001926/2023-58). Modifiquei a regra de cors para aceitar apenas requisções do link do front end.
+
+## 10/11/2025
+- [] Selecionar interferência
+    Ao selecionar interferência se faz uma busca dos detalhes. Porém estes destalhes no novo serviço já estão vindo, sem precisar de pesquisar novamente.
+
+  

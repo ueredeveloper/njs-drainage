@@ -89,7 +89,7 @@ BEGIN
 
         -- 🧠 5. Retornar documento criado/atualizado
         SELECT json_build_object(
-            'status', 'success',
+            'status', 'sucesso',
             'mensagem', 'Documento salvo com sucesso!',
             'object', json_build_object(
                 'id', _doc.id,
@@ -125,7 +125,7 @@ BEGIN
 
     EXCEPTION WHEN OTHERS THEN
         RETURN json_build_object(
-            'status', 'error',
+            'status', 'erro',
             'mensagem', SQLERRM,
             'object', NULL
         );

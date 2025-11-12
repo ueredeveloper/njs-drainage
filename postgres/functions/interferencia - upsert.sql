@@ -29,7 +29,7 @@ BEGIN
     -- 2️⃣ Validação obrigatória
     IF v_tipo_interferencia_id IS NULL THEN
         RETURN jsonb_build_object(
-            'status', 'error',
+            'status', 'erro',
             'mensagem', 'Campo obrigatório "tipoInterferencia" não informado.',
             'object', NULL
         );
@@ -55,7 +55,7 @@ BEGIN
 
             IF NOT FOUND THEN
                 RETURN jsonb_build_object(
-                    'status', 'error',
+                    'status', 'erro',
                     'mensagem', format('Interferência com id=%s não encontrada.', v_int_id),
                     'object', NULL
                 );
@@ -175,7 +175,7 @@ BEGIN
 
         -- 7️⃣ Retorno completo
         SELECT jsonb_build_object(
-            'status', 'success',
+            'status', 'sucesso',
             'mensagem', CASE WHEN sub_json ? 'id' THEN 'Subterrânea atualizada com sucesso.' ELSE 'Subterrânea criada com sucesso.' END,
             'object', jsonb_build_object(
                 'id', _int.id,
@@ -266,7 +266,7 @@ BEGIN
     EXCEPTION
         WHEN OTHERS THEN
             RETURN jsonb_build_object(
-                'status', 'error',
+                'status', 'erro',
                 'mensagem', 'Erro ao salvar subterrânea: ' || SQLERRM,
                 'object', NULL
             );

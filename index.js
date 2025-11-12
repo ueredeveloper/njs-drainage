@@ -45,6 +45,7 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
   deleteDocument,
   deleteDocUserRelation,
   searchUsersByDocumentId,
+  searchUsersByCpfCnpj,
 
 } = require('./routes');
 
@@ -67,6 +68,7 @@ app.use('/states', fetchAllStates)
 app.use('/domains', fetchAllDomainTables)
 
 app.use('/users', searchUsersByParam)
+app.use('/users', searchUsersByCpfCnpj)
 app.use('/users', searchUsersByDocumentId)
 app.use('/users', upsertUser)
 app.use('/users', deleteUserById)

@@ -13,7 +13,7 @@ BEGIN
         -- 🧭 Se não encontrou nada para deletar
         IF v_deleted_id IS NULL THEN
             RETURN json_build_object(
-                'status', 'error',
+                'status', 'erro',
                 'mensagem', format('Relação documento %s e usuário %s não encontrada.', p_doc_id, p_user_id),
                 'object', NULL
             );
@@ -31,7 +31,7 @@ BEGIN
 
     EXCEPTION WHEN OTHERS THEN
         RETURN json_build_object(
-            'status', 'error',
+            'status', 'erro',
             'mensagem', SQLERRM,
             'object', NULL
         );

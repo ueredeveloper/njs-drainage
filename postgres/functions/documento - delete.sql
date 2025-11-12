@@ -9,7 +9,7 @@ BEGIN
 
         IF NOT v_exists THEN
             RETURN json_build_object(
-                'status', 'error',
+                'status', 'erro',
                 'mensagem', format('Documento %s não encontrado.', doc_id),
                 'object', NULL
             );
@@ -27,7 +27,7 @@ BEGIN
 
     EXCEPTION WHEN OTHERS THEN
         RETURN json_build_object(
-            'status', 'error',
+            'status', 'erro',
             'mensagem', SQLERRM,
             'object', NULL
         );
