@@ -28,3 +28,6 @@ Este documento descreve como realizar a conexão com um servidor FTPS usando as 
 # Observações
   ## 06/02/2025
   No último commit, no momento em que enviei para o github o azure atualizou junto, porém estava faltando as senhas do banco da Adasa. Estas senhas não devem ser enviadas junto com os arquivos para o azure, ou seja, o arquivo .env não deve ser enviado. As senhas devem ser adicionadas nas variáveis ambiente do portal azure.
+
+# Atualizações no Azure
+  Quando faz uma atualização, é preciso inserir os polígonos otto `a-d-bho-211022.json` e dar com comando `node index` no cmd do azure, na pasta wwwroot.

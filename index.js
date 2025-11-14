@@ -51,6 +51,15 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
 
 } = require('./routes');
 
+// Allow only a specific origin
+const corsOptions = {
+  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
+  methods: ['GET'],
+  credentials: false, // se você usa cookies/autenticação
+};
+
+app.use(cors(corsOptions));
+
 
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint);
@@ -109,15 +118,6 @@ app.use('/documents', upsertDocument)
 app.use('/documents', deleteDocument)
 app.use('/documents', deleteDocUserRelation)
 
-
-// Allow only a specific origin
-const corsOptions = {
-  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
-  methods: ['GET'],
-  credentials: false, // se você usa cookies/autenticação
-};
-
-app.use(cors(corsOptions));
 
 //app.use(cors());
 app.use(bodyParser.json({ limit: '200mb' }));

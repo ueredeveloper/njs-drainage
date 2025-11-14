@@ -69,4 +69,3 @@ JSON.stringify({
 - [] Selecionar interferência
     Ao selecionar interferência se faz uma busca dos detalhes. Porém estes destalhes no novo serviço já estão vindo, sem precisar de pesquisar novamente.
 
-  
