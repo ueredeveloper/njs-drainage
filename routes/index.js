@@ -23,6 +23,7 @@ const fetchAllDomainTables = require('./dominio-route')
 const searchUsersByParam = require('./usuario-route');
 const searchUsersByCpfCnpj = require('./usuario-route');
 const searchUsersByDocumentId = require('./usuario-route');
+const searchUsersWithDocByParam = require('./usuario-route');
 const upsertUser = require('./usuario-route');
 const deleteUserById = require('./usuario-route');
 const searchProcessByParam = require('./processo-router');
@@ -45,6 +46,7 @@ const listAllHydrogeoFraturado = require('./fraturado-route');
 const listAllHydrogeoPoroso = require('./poroso-route');
 
 const searchInterferencesByParam = require('./interferencia-route');
+const searchInterferencesByAddressId = require('./interferencia-route');
 const upsertInterference = require('./interferencia-route');
 const deleteInterference = require('./interferencia-route');
 
@@ -77,6 +79,7 @@ module.exports = {
     searchUsersByParam,
     searchUsersByCpfCnpj,
     searchUsersByDocumentId,
+    searchUsersWithDocByParam,
     upsertUser,
     deleteUserById,
 
@@ -105,6 +108,7 @@ module.exports = {
     listAllHydrogeoPoroso, 
 
     searchInterferencesByParam,
+    searchInterferencesByAddressId,
     upsertInterference,
     deleteInterference, 
 

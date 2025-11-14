@@ -1,4 +1,4 @@
-const { searchUserByParam, upsertUser, deleteUsuerById, searchUsersByDocumentId, searchUsersByCpfCnpj } = require("../services/usuario-service");
+const { searchUserByParam, upsertUser, deleteUsuerById, searchUsersByDocumentId, searchUsersByCpfCnpj, searchUsersWithDocByParam } = require("../services/usuario-service");
 
 
 exports.searchUserByParam = async (req, res) => {
@@ -18,6 +18,18 @@ exports.searchUsersByCpfCnpj = async (req, res) => {
 
   try {
     const docs = await searchUsersByCpfCnpj(param);
+    res.status(201).json(docs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.searchUsersWithDocByParam = async (req, res) => {
+
+  let { param } = req.query;
+
+  try {
+    const docs = await searchUsersWithDocByParam(param);
     res.status(201).json(docs);
   } catch (err) {
     res.status(500).json({ error: err.message });

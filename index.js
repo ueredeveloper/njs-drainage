@@ -46,6 +46,8 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
   deleteDocUserRelation,
   searchUsersByDocumentId,
   searchUsersByCpfCnpj,
+  searchUsersWithDocByParam,
+  searchInterferencesByAddressId,
 
 } = require('./routes');
 
@@ -72,6 +74,8 @@ app.use('/users', searchUsersByCpfCnpj)
 app.use('/users', searchUsersByDocumentId)
 app.use('/users', upsertUser)
 app.use('/users', deleteUserById)
+app.use('/users', searchUsersWithDocByParam)
+
 
 app.use('/processes', searchProcessByParam)
 app.use('/processes', upsertProcess)
@@ -94,6 +98,8 @@ app.use('/hydrogeo-poroso', findPorosoSystemByPoint )
 app.use('/hydrogeo-poroso', listAllHydrogeoPoroso)
 
 app.use('/interferences', searchInterferencesByParam)
+app.use('/interferences', searchInterferencesByAddressId)
+app.use('/interferences', searchUsersByCpfCnpj)
 app.use('/interferences', upsertInterference)
 app.use('/interferences', deleteInterference)
 

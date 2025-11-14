@@ -1,4 +1,4 @@
-const { searchInterferencesByParam, upsertInterference, deleteInterference } = require("../services/interferencia-service");
+const { searchInterferencesByParam, upsertInterference, deleteInterference, searchInterferencesByAddressId } = require("../services/interferencia-service");
 
 
 exports.searchInterferenceByParam = async (req, res) => {
@@ -7,6 +7,18 @@ exports.searchInterferenceByParam = async (req, res) => {
 
   try {
     const docs = await searchInterferencesByParam(param);
+    res.status(201).json(docs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.searchInterferencesByAddressId = async (req, res) => {
+
+  let { addId } = req.query;
+
+  try {
+    const docs = await searchInterferencesByAddressId(addId);
     res.status(201).json(docs);
   } catch (err) {
     res.status(500).json({ error: err.message });

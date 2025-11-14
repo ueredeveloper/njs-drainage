@@ -34,7 +34,9 @@ BEGIN
                 'endereco', CASE WHEN e.id IS NOT NULL
                                  THEN jsonb_build_object(
                                      'id', e.id,
-                                     'logradouro', e.logradouro)
+                                     'logradouro', e.logradouro,
+                                     'bairro', e.bairro
+                                     )
                                  ELSE NULL END,
                 'tipoInterferencia', CASE WHEN ti.id IS NOT NULL
                                  THEN jsonb_build_object('id', ti.id, 'descricao', ti.descricao)

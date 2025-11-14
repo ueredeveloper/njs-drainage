@@ -18,6 +18,7 @@ BEGIN
         'endereco', json_build_object(
             'id', _end.id,
             'logradouro', _end.logradouro
+            'bairro', _end.bairro
         ),
         'tipoDocumento', json_build_object(
             'id', dt.id,
