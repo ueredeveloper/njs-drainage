@@ -15,6 +15,15 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 const app = express();
 app.use(express.json());
 
+// Allow only a specific origin
+const corsOptions = {
+  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
+  methods: ['GET'],
+  credentials: false, // se você usa cookies/autenticação
+};
+
+app.use(cors(corsOptions));
+
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
 const riversEndpoint = require('./rivers');
@@ -51,14 +60,7 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
 
 } = require('./routes');
 
-// Allow only a specific origin
-const corsOptions = {
-  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
-  methods: ['GET'],
-  credentials: false, // se você usa cookies/autenticação
-};
 
-app.use(cors(corsOptions));
 
 
 // Mount the Azure endpoint

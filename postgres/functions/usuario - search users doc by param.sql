@@ -11,7 +11,7 @@ BEGIN
         'us_doc_id', _d.id,
         'doc_end', _d.endereco,
         'doc_sei', _d.numero_sei,
-        'proc_sei', _d.processo,
+        'proc_sei', _p.numero,
         'end_id', _e.id,
         'end_logradouro', _e.logradouro
       )
