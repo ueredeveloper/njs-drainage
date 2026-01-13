@@ -18,6 +18,7 @@ app.use(express.json());
 // Allow only a specific origin
 const corsOptions = {
   origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
+  //origin: 'http://localhost:3001',
   methods: ['GET'],
   credentials: false, // se você usa cookies/autenticação
 };
@@ -167,7 +168,7 @@ app.get('/find-points-inside-subsystem', async function (req, res) {
     client = await getClient();
 
     // Define the SQL query and parameter
-    const query = `SELECT * FROM find_all_points_in_a_subsystem($1, $2);`;
+    const query = `SELECT * FROM find_points_in_a_system($1, $2);`;
     const values = [`SRID=4674;POINT(${lng} ${lat})`, tp_id]; // Parameters for the query
 
     // Execute the query
@@ -176,7 +177,7 @@ app.get('/find-points-inside-subsystem', async function (req, res) {
     // Log or process the results
     //console.log('Query Results:', result.rows);
 
-    res.send(JSON.stringify(result.rows));
+    res.send(JSON.stringify(result.rows[0]));
 
     //return result.rows; // Return the rows if needed
   } catch (err) {

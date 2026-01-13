@@ -69,3 +69,12 @@ JSON.stringify({
 - [] Selecionar interferência
     Ao selecionar interferência se faz uma busca dos detalhes. Porém estes destalhes no novo serviço já estão vindo, sem precisar de pesquisar novamente.
 
+## 10/12/2025
+- [] Salvar Documento - Relacionamento Processo com Usuário
+  Veficiar se ao salvar um documento o relacionamento do processo com usuário está sendo feito. 
+    Então é preciso buscar se o processo existe, se este processo existir relacionar com o usuário. Se não existir o processo, salvar o processo e relacionar com o usuário.
+
+
+
+📅 **Data:** 09 de Janeiro de 2026
+- [] Há três endpoints finais para migrar para o azure.
