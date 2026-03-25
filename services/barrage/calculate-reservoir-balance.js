@@ -1,5 +1,4 @@
 const express = require('express');
-const cors = require('cors');
 
 const { getClient } = require('../../db');
 const { calcularReservatorios } = require('./calculate-reservoir');
@@ -10,12 +9,6 @@ const { calcularReservatorios } = require('./calculate-reservoir');
  * @type {express.Router}
  */
 const router = express.Router();
-
-const corsOptions = {
-    origin: '*',
-};
-
-router.use(cors(corsOptions));
 
 router.post('/calculate-reservoir-balance', async (req, res) => {
   
