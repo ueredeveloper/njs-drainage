@@ -17,8 +17,8 @@ app.use(express.json());
 
 // Allow only a specific origin
 const corsOptions = {
-  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
-  //origin: 'http://localhost:3001',
+  //origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
+  origin: 'http://localhost:3000',
   methods: ['GET'],
   credentials: false, // se você usa cookies/autenticação
 };
@@ -27,7 +27,8 @@ app.use(cors(corsOptions));
 
 // Require the Azure endpoint router
 const azureEndpoint = require('./azure/azure-endpoint');
-const riversEndpoint = require('./rivers');
+const riversEndpoint = require('./services/rivers/index');
+const calculateReservoirBalance = require('./services/barrage/calculate-reservoir-balance');
 const { getClient } = require('./db');
 const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
   fetchAllStates, fetchAllDomainTables, deleteAddress,
@@ -62,11 +63,10 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
 } = require('./routes');
 
 
-
-
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint);
 app.use('/rivers', riversEndpoint);
+app.use('/barrage', calculateReservoirBalance)
 
 app.use('/documents', searchDocumentsByParam)
 app.use('./documents', searchDocumentsByUserId)
@@ -719,7 +719,7 @@ app.get('/find_points-inside-shape', async function (req, res) {
 
 });
 
-let port = process.env.PORT || 3000;
+let port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log("njs-drainage")
 });

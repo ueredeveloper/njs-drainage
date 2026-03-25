@@ -16,7 +16,7 @@ router.use(cors(corsOptions));
 
 
 // Supondo que 'rios-df-141223.json' contenha recursos GeoJSON de rios
-const rivers = require('../json/rios-df-141223.json');
+const rivers = require('../../json/rios-df-141223.json');
 
 /**
  * Endpoint GET para filtrar rios com base nas coordenadas do usuário.
