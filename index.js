@@ -19,7 +19,7 @@ app.use(express.json());
 const corsOptions = {
   origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
   //origin: 'http://localhost:3000',
-  methods: ['GET'],
+  methods: ['GET', 'POST'],
   credentials: false, // se você usa cookies/autenticação
 };
 
