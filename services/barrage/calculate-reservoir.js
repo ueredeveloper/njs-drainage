@@ -1,8 +1,5 @@
-// c:\Users\fabricio.barrozo\Desktop\workspace\RESERVATORIOS-MAIN_NODE\index.js
 
-//
 // Utilitários
-//
 const round2 = (x) => Number(x.toFixed(2));
 const clampVolume = (v, maxVol) => (v < 0 ? 0 : v > maxVol ? maxVol : v);
 

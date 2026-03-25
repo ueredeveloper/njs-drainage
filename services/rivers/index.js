@@ -12,6 +12,7 @@ const corsOptions = {
   origin: '*',
 };
 
+
 router.use(cors(corsOptions));
 
 
