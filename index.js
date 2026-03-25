@@ -720,7 +720,7 @@ app.get('/find_points-inside-shape', async function (req, res) {
 
 });
 
-let port = process.env.PORT || 3001;
+let port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log("njs-drainage")
 });
