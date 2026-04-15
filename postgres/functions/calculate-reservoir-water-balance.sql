@@ -19,6 +19,8 @@ DECLARE
     v_dias              integer[];
     v_evaporacao        numeric[];
     v_temp_dia          integer[];
+    v_fill_qmm          boolean;
+    v_qmm_input         numeric[];
 
     -- Variáveis da localização e hierarquia
     v_point             geometry;
@@ -61,6 +63,8 @@ BEGIN
     v_dias             := ARRAY(SELECT value::integer FROM jsonb_array_elements_text(p_input -> 'operacao' -> 'Dias'));
     v_evaporacao       := ARRAY(SELECT value::numeric FROM jsonb_array_elements_text(p_input -> 'operacao' -> 'Evaporacao'));
     v_temp_dia         := ARRAY(SELECT value::integer FROM jsonb_array_elements_text(p_input -> 'operacao' -> 'tempDia'));
+    v_fill_qmm         := COALESCE((p_input -> 'operacao' ->> 'fillQmm')::boolean, false);
+    v_qmm_input        := ARRAY(SELECT value::numeric FROM jsonb_array_elements_text(p_input -> 'operacao' -> 'qmm'));
 
     -- 2. Ponto geográfico
     v_point := ST_SetSRID(ST_MakePoint(v_longitude, v_latitude), 4674);
@@ -104,10 +108,14 @@ BEGIN
     END IF;
 
     -- 6. Cálculos derivados
-    v_qmm_regionalizada := ARRAY(
-        SELECT ROUND(((q_val / NULLIF(v_uh_area_km2, 0)) * v_area_contribuicao)/1000, 4)
-        FROM unnest(v_qmm) AS q_val
-    );
+    IF v_fill_qmm THEN
+        v_qmm_regionalizada := v_qmm_input;
+    ELSE
+        v_qmm_regionalizada := ARRAY(
+            SELECT TRUNC(((q_val / NULLIF(v_uh_area_km2, 0)) * v_area_contribuicao) / 1000, 4)
+            FROM unnest(v_qmm) AS q_val
+        );
+    END IF;
 
     v_q_defluente := ARRAY(
         SELECT ROUND((((q_val / NULLIF(v_uh_area_km2, 0)) * v_area_contribuicao)* 0.2)/1000, 4) 
@@ -183,26 +191,242 @@ END;
 $$;
 
 
+$$;
 
 SELECT calculate_reservoir_water_balance('{
-  "coordenadas": {
-    "latitude": -15.775139,
-    "longitude": -47.939599
-  },
-  "dam_data": {
-    "Max_Volume": 173000,
-    "Min_Volume": 0,
-    "Tot_Area": 40520.46,
-    "M_Infiltration": 0.1,
-    "Q_Reg": 0.034,
-    "Min_Vol_Observed": 0,
-    "Q_Cap": 104
-  },
-  "operacao": {
-    "anos": 1,
-    "Meses": ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],
-    "Dias": [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
-    "Evaporacao": [130.06, 141.88, 130.65, 115.87, 104.00, 96.00, 116.02, 159.60, 169.76, 204.80, 110.62, 120.58],
-    "tempDia": [24, 24, 24, 24, 24, 0, 0, 0, 0, 24, 24, 24]
-  }
+    "coordenadas": {
+        "latitude": -15.775139,
+        "longitude": -47.939599
+    },
+    "dam_data": {
+        "Max_Volume": 374411.5,
+        "Min_Volume": 374411.5,
+        "Tot_Area": 10.02,
+        "M_Infiltration": 2.2219e-7,
+        "Q_Reg": 0.0341987545584542,
+        "Min_Vol_Observed": 0,
+        "Q_Cap": [
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5
+        ]
+    },
+    "operacao": {
+        "anos": 1,
+        "Meses": [
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez"
+        ],
+        "Dias": [
+            31,
+            28,
+            31,
+            30,
+            31,
+            30,
+            31,
+            31,
+            30,
+            31,
+            30,
+            31
+        ],
+        "Evaporacao": [
+            130.06,
+            141.88,
+            136.4,
+            126,
+            108.5,
+            99,
+            105.4,
+            133.3,
+            147,
+            155,
+            135,
+            127.1
+        ],
+        "tempDia": [
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21
+        ],
+	"fillQmm": true,
+        "qmm": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vazao_l_s": [
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5
+        ]
+    }
 }'::jsonb);
+
+-- fim do teste true
+
+SELECT calculate_reservoir_water_balance('{
+    "coordenadas": {
+        "latitude": -15.775139,
+        "longitude": -47.939599
+    },
+    "dam_data": {
+        "Max_Volume": 374411.5,
+        "Min_Volume": 374411.5,
+        "Tot_Area": 10.02,
+        "M_Infiltration": 2.2219e-7,
+        "Q_Reg": 0.0341987545584542,
+        "Min_Vol_Observed": 0,
+        "Q_Cap": [
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5
+        ]
+    },
+    "operacao": {
+        "anos": 1,
+        "Meses": [
+            "Jan",
+            "Fev",
+            "Mar",
+            "Abr",
+            "Mai",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Set",
+            "Out",
+            "Nov",
+            "Dez"
+        ],
+        "Dias": [
+            31,
+            28,
+            31,
+            30,
+            31,
+            30,
+            31,
+            31,
+            30,
+            31,
+            30,
+            31
+        ],
+        "Evaporacao": [
+            130.06,
+            141.88,
+            136.4,
+            126,
+            108.5,
+            99,
+            105.4,
+            133.3,
+            147,
+            155,
+            135,
+            127.1
+        ],
+        "tempDia": [
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21,
+            21
+        ],
+	"fillQmm": false,
+        "qmm": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "vazao_l_s": [
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5,
+            5.5
+        ]
+    }
+}'::jsonb);
+
+-- fim do teste false
