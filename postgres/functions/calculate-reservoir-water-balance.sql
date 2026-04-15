@@ -12,7 +12,7 @@ DECLARE
     v_m_infiltration    numeric;
     v_q_reg             numeric;
     v_min_vol_observed  numeric;
-    v_q_cap             numeric;
+    v_q_cap             numeric[];
     
     v_anos              integer;
     v_meses             text[];
@@ -53,7 +53,8 @@ BEGIN
     v_m_infiltration   := (p_input -> 'dam_data' ->> 'M_Infiltration')::numeric;
     v_q_reg            := (p_input -> 'dam_data' ->> 'Q_Reg')::numeric;
     v_min_vol_observed := (p_input -> 'dam_data' ->> 'Min_Vol_Observed')::numeric;
-    v_q_cap            := (p_input -> 'dam_data' ->> 'Q_Cap')::numeric;
+    v_q_cap            := ARRAY(SELECT value::numeric FROM jsonb_array_elements_text(p_input -> 'dam_data' -> 'Q_Cap'));
+						
     
     v_anos             := (p_input -> 'operacao' ->> 'anos')::integer;
     v_meses            := ARRAY(SELECT value::text FROM jsonb_array_elements_text(p_input -> 'operacao' -> 'Meses'));
@@ -104,12 +105,12 @@ BEGIN
 
     -- 6. Cálculos derivados
     v_qmm_regionalizada := ARRAY(
-        SELECT ROUND((q_val / NULLIF(v_uh_area_km2, 0)) * v_area_contribuicao, 4)
+        SELECT ROUND(((q_val / NULLIF(v_uh_area_km2, 0)) * v_area_contribuicao)/1000, 4)
         FROM unnest(v_qmm) AS q_val
     );
 
     v_q_defluente := ARRAY(
-        SELECT ROUND(q_val * 0.2, 4)
+        SELECT ROUND((((q_val / NULLIF(v_uh_area_km2, 0)) * v_area_contribuicao)* 0.2)/1000, 4) 
         FROM unnest(v_qmm) AS q_val
     );
 
@@ -167,6 +168,7 @@ BEGIN
         ),
         'informacoes_adicionais', jsonb_build_object(
             'uh_area_km2_usada', v_uh_area_km2,
+			'area_contribuicao', v_area_contribuicao,
 			'uh_nome', 	v_uh_nome,
 			'uh_rotulo', v_uh_rotulo,
             'data_calculo',        CURRENT_TIMESTAMP,
@@ -177,6 +179,7 @@ BEGIN
 
     RETURN v_json_result;
 END;
+
 $$;
 
 

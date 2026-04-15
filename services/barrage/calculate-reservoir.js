@@ -82,9 +82,13 @@ export function calcularReservatorios(inputData) {
   const Qcap_Ls    = expand12(dam_data.Q_Cap, anos, "Q_Cap"); // L/s
   const maxVol     = dam_data.Max_Volume;            // m³
 
+  
+  //Dias fixos para entrada média (entrada_media) e defluente (qdef_mes)
+  let _dias = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
   // ——— Cálculos por mês
-  const entrada_media = qmmm.map((q, i) => (q) * dias[i] * 86400);     // m³/mês
-  const qdef_mes      = qdefS.map((q, i) => q * dias[i] * 86400);    // m³/mês
+  const entrada_media = qmmm.map((q, i) => (q) * _dias[i] * 86400);     // m³/mês
+  const qdef_mes      = qdefS.map((q, i) => q * _dias[i] * 86400);    // m³/mês
   const evaporacao_m3 = evap.map((mm) => mm * (area / 1000));        // m³/mês
   const infiltracao   = dias.map((d) => infilDia_m * d * area);      // m³/mês
 
