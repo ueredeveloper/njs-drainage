@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Allow only a specific origin
 const corsOptions = {
-  origin: 'https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net',
+  origin: ['http://localhost:3003','https://app-sis-out-srh-front-01-htd0hnf6fce0cdem.brazilsouth-01.azurewebsites.net'],
   //origin: 'http://localhost:3000',
   methods: ['GET', 'POST', 'OPTIONS'],
   credentials: false,
@@ -42,7 +42,7 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
   upsertAttachment,
   deleteAttachment,
   listAllHydrograficBasins,
-  listAllHydrograficUnits, 
+  listAllHydrograficUnits,
   findHydrographicUnitByPoint,
   findHydrographicBasinByPoint,
   findFraturadoSystemByPoint,
@@ -60,9 +60,18 @@ const { searchDocumentsByParam, getDocumentTypes, searchAddressByParam,
   searchUsersByCpfCnpj,
   searchUsersWithDocByParam,
   searchInterferencesByAddressId,
+  colaboradorRoute,
 
 } = require('./routes');
 
+
+const authMiddleware = require('./middlewares/auth-middleware');
+
+// Rota pública — login não exige token
+app.use('/colaboradores', colaboradorRoute);
+
+// Todas as rotas abaixo exigem token válido
+app.use(authMiddleware);
 
 // Mount the Azure endpoint
 app.use('/azure', azureEndpoint);

@@ -1,6 +1,6 @@
 {
   "name": "njs-drainage",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "@supabase/supabase-js": "^2.22.0",
     "@turf/turf": "^6.5.0",
     "axios": "^0.26.0",
+    "bcryptjs": "^3.0.3",
     "body-parser": "^1.19.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -21,6 +22,7 @@
     "express": "^4.17.3",
     "fetch-blob": "^3.1.5",
     "fetch-file": "^1.0.1",
+    "jsonwebtoken": "^9.0.3",
     "mssql": "^10.0.1",
     "node-fetch": "2.0",
     "pg": "^8.13.1",

@@ -1,4 +1,6 @@
 
+// Colaborador
+const colaboradorRoute = require('./colaborador-route');
 
 // Documento
 const searchDocumentsByParam = require('./documento-route');
@@ -58,6 +60,9 @@ const deleteDocUserRelation = require('./documento-route');
 
 
 module.exports = {
+    // colaborador
+    colaboradorRoute,
+
     // documentos
     searchDocumentsByParam,
     searchDocumentsByUserId,

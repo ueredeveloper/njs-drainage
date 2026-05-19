@@ -55,7 +55,7 @@ function obterQdef(operacao, anos, qmmm) {
 //
 // Processamento
 //
-export function calcularReservatorios(inputData) {
+function calcularReservatorios(inputData) {
   const { dam_data, operacao } = inputData;
 
   const anos = Number(operacao?.anos ?? 1);
@@ -154,3 +154,5 @@ export function calcularReservatorios(inputData) {
     bruta: resposta
   };
 }
+
+module.exports = { calcularReservatorios };
