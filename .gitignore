@@ -25,13 +25,8 @@ Thumbs.db
 .cache/
 *.swp
 
-# Arquivos Json (large files)
+# Arquivos JSON grandes (pasta versionada, conteúdo não)
+json/*
+!json/.gitkeep
 
-# Ignore JSON files
-json/
-/json/a-d-bho-211022.json
-#
-json/
-
-#
 revisions.md
