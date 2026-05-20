@@ -29,7 +29,7 @@ exports.loginColaborador = async ({ email, password }) => {
     try {
         client = await getClient();
 
-        const query = `SELECT id, email, password_hash, autorizacao FROM colaborador WHERE email = lower(trim($1))`;
+        const query = `SELECT id, email, password_hash, autorizacao, admin FROM colaborador WHERE email = lower(trim($1))`;
         const { rows } = await client.query(query, [email]);
 
         const colaborador = rows[0];
@@ -49,17 +49,51 @@ exports.loginColaborador = async ({ email, password }) => {
         }
 
         const token = jwt.sign(
-            { id: colaborador.id, email: colaborador.email },
+            { id: colaborador.id, email: colaborador.email, admin: colaborador.admin },
             JWT_SECRET,
             { expiresIn: JWT_EXPIRES_IN }
         );
 
         return {
             token,
-            colaborador: { id: colaborador.id, email: colaborador.email }
+            colaborador: { id: colaborador.id, email: colaborador.email, admin: colaborador.admin }
         };
     } catch (err) {
         console.error('Error in loginColaborador:', err.stack);
+        throw err;
+    } finally {
+        await client.end();
+    }
+};
+
+exports.fetchAllColaboradores = async () => {
+    let client;
+    try {
+        client = await getClient();
+        const { rows } = await client.query(
+            `SELECT id, email, autorizacao FROM colaborador ORDER BY email`
+        );
+        return rows;
+    } catch (err) {
+        console.error('Error in fetchAllColaboradores:', err.stack);
+        throw err;
+    } finally {
+        await client.end();
+    }
+};
+
+exports.updateAutorizacao = async ({ id, autorizacao }) => {
+    let client;
+    try {
+        client = await getClient();
+        const { rows } = await client.query(
+            `UPDATE colaborador SET autorizacao = $2 WHERE id = $1 RETURNING id, email, autorizacao`,
+            [id, autorizacao]
+        );
+        if (rows.length === 0) throw new Error('Colaborador não encontrado');
+        return rows[0];
+    } catch (err) {
+        console.error('Error in updateAutorizacao:', err.stack);
         throw err;
     } finally {
         await client.end();

@@ -1,4 +1,4 @@
-const { upsertColaborador, loginColaborador } = require('../services/colaborador-service');
+const { upsertColaborador, loginColaborador, fetchAllColaboradores, updateAutorizacao } = require('../services/colaborador-service');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SENHA_REGEX = /^.{3,5}$/;
@@ -27,6 +27,36 @@ exports.upsertColaborador = async (req, res) => {
         res.status(200).json(result);
     } catch (err) {
         console.error('Error in upsertColaborador controller:', err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.fetchAllColaboradores = async (req, res) => {
+    try {
+        const result = await fetchAllColaboradores();
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Error in fetchAllColaboradores controller:', err);
+        res.status(500).json({ error: err.message });
+    }
+};
+
+exports.updateAutorizacao = async (req, res) => {
+    try {
+        if (!req.colaborador.admin) {
+            return res.status(403).json({ error: 'Apenas administradores podem alterar a autorização' });
+        }
+
+        const { id, autorizacao } = req.body;
+
+        if (id === undefined || autorizacao === undefined) {
+            return res.status(400).json({ error: 'id e autorizacao são obrigatórios' });
+        }
+
+        const result = await updateAutorizacao({ id, autorizacao });
+        res.status(200).json(result);
+    } catch (err) {
+        console.error('Error in updateAutorizacao controller:', err);
         res.status(500).json({ error: err.message });
     }
 };
