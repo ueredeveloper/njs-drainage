@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
 
 router.post('/login', login);
-router.post('/upsert-colaborador', authMiddleware, upsertColaborador);
+router.post('/upsert-colaborador', upsertColaborador);
 router.get('/fetch-all-colaboradores', authMiddleware, fetchAllColaboradores);
 router.post('/update-autorizacao', authMiddleware, updateAutorizacao);
 
